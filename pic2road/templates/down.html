@@ -6,7 +6,7 @@
 
         <script>        
         function doSave() {  
-            var bloburl = "data-out" 
+            var bloburl = "download/{{ filename }}" 
             var anchor = document.createElement("a");  
             if ('download' in anchor) {  
                 anchor.style.visibility = "hidden";  

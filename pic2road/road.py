@@ -1,4 +1,8 @@
 from flask import render_template, request, Flask, send_from_directory
+from uuid import uuid4
+
+global name
+name = ""
 
 
 def roadreduce(inputData):
@@ -57,16 +61,19 @@ def dataDo():
     inputdata = request.form["data"]
     if inputdata:
         result = roadreduce(inputdata)
-        with open("data/data_out.txt", "w") as f:
+        global name
+        name = str(uuid4())
+        with open("data/%s.txt" % name, "w") as f:
             f.write("\n".join(result))
-        return render_template("down.html")
+        return render_template("down.html", filename=name)
     else:
         return "NO DATA"
 
 
-@app.route('/data-out')
-def dataput():
-    return send_from_directory("data", "data_out.txt")
+@app.route('/download/<ha>')
+def dataput(ha):
+    print(name)
+    return send_from_directory("data", name+".txt")
 
 app.run(port=1888, debug=True)
 
