@@ -2,12 +2,14 @@
 
 from  arm import arm
 import tkinter as tk
+import tkinter.ttk as ttk
 import serial.tools.list_ports
 class Appication(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.data = {}
         self.pack()
+        self.serialPorts = serial.tools.list_ports.comports()
         self.create_widgets()
         self.data["an1"] = 45
         self.data["an2"] = 45
@@ -21,6 +23,8 @@ class Appication(tk.Frame):
         self.arm = arm()
         self.text5 = tk.Label(self,text="Port")
         self.text5.pack()
+        # self.port_check = ttk.Combobox(self,textvariable=variable)
+        # self.port_check.pack()
         self.port = tk.Entry(self)
         self.port.pack()
         self.listport = tk.Button(self,text="list all port",command=self.listportFun,fg="red")
@@ -74,16 +78,16 @@ class Appication(tk.Frame):
         self.data["an3"] = int(self.an3.get()) or self.data["an3"]
         self.data["an4"] = int(self.an4.get()) or self.data["an4"]
         if self.data["an1"] >=  0 and  self.data["an1"] <= 180 and  \
-            self.data["an2"] >=  15 and  self.data["an1"] <= 165 and \
-            self.data["an1"] >= 0 and  self.data["an1"] <= 180 and \
-            self.data["an1"] >=  0 and  self.data["an1"] <= 180:
-            reading = self.arm.run(self.data["an1"], self.data["an2"], self.data["an3"], self.data["an4"])
+            self.data["an2"] >=  15 and  self.data["an2"] <= 165 and \
+            self.data["an3"] >= 0 and  self.data["an3"] <= 180 and \
+            self.data["an4"] >=  0 and  self.data["an4"] <= 180:
+            print("run",str(self.data))
+            reading = self.arm.run([self.data["an1"], self.data["an2"], self.data["an3"], self.data["an4"]])
             self.showinfo.insert("end",reading)
         else:
             self.showinfo.insert("end","Wrong input\n")
     def listportFun(self):
-        reading = serial.tools.list_ports.comports()
-        self.showinfo.insert("end","\n".join([str(i) for i in reading])+"\n")
+        self.showinfo.insert("end","\n".join([str(i) for i in self.serialPorts])+"\n")
         
 root = tk.Tk()
 app = Appication(master=root)
