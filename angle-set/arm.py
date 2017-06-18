@@ -14,6 +14,7 @@ class arm(object):
         self.ser = Serial(port,9600,timeout=0.005)
         reading = str(self.ser.read(100),'utf-8')+"\n"
         print(reading)
+        self.run([80,130,150,170])
         return reading
     def run(self,angles):
         for i in range(4):
