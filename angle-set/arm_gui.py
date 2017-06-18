@@ -2,7 +2,7 @@
 
 from  arm import arm
 import tkinter as tk
-
+import serial.tools.list_ports
 class Appication(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
@@ -23,6 +23,8 @@ class Appication(tk.Frame):
         self.text5.pack()
         self.port = tk.Entry(self)
         self.port.pack()
+        self.listport = tk.Button(self,text="list all port",command=self.listportFun,fg="red")
+        self.listport.pack()
         self.connect = tk.Button(self,text="connect",command=self.connectFun,fg="red")
         self.connect.pack()
         self.disconnect = tk.Button(self,text="disconnect",command=self.disConnetctFun,fg="red")
@@ -79,6 +81,9 @@ class Appication(tk.Frame):
             self.showinfo.insert("end",reading)
         else:
             self.showinfo.insert("end","Wrong input\n")
+    def listportFun(self):
+        reading = serial.tools.list_ports.comports()
+        self.showinfo.insert("end",reading+"\n")
         
 root = tk.Tk()
 app = Appication(master=root)
