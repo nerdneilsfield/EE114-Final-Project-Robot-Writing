@@ -83,7 +83,7 @@ class Appication(tk.Frame):
             self.showinfo.insert("end","Wrong input\n")
     def listportFun(self):
         reading = serial.tools.list_ports.comports()
-        self.showinfo.insert("end",reading+"\n")
+        self.showinfo.insert("end","\n".join([str(i) for i in reading])+"\n")
         
 root = tk.Tk()
 app = Appication(master=root)
