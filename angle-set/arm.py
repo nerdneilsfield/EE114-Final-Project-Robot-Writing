@@ -9,8 +9,12 @@ def hello(s):
 
 class arm(object):
     def __init__(self):
-        self.ser = Serial("/dev/ttyACM0",9600,timeout=1)
-        print(self.ser.read(100))
+        pass
+    def connect(self,port):
+        self.ser = Serial(port,9600,timeout=1)
+        reading = str(self.ser.read(100),'utf-8')+"\n"
+        print(reading)
+        return reading
     def run(self,a,b,c,d):
         self.command = bytes(
             "1"+hello(a) +
@@ -19,8 +23,15 @@ class arm(object):
             "4"+hello(d), "utf-8"
         )
         self.ser.write(self.command)
-        print(self.ser.read(100))
-        sleep(1)
+        reading = str(self.ser.read(100),'utf-8')+"\n"
+        print(reading)
+        return reading
+        sleep(0.1)
+    def test(self):
+        self.ser.write(bytes("p","utf-8"))
+        reading = str(self.ser.read(100),'utf-8')+"\n"
+        print(reading)
+        return reading
     def demo(self):
         i = 9;
         while(i):
@@ -32,13 +43,3 @@ class arm(object):
 
     def close(self):
         self.ser.close()
-
-# Newdemo  = arm()
-
-# a = input("Angle for motor1?")
-# b = input("Angle for motor2")
-# c = input("Angle for motor3?")
-# d = input("Angle for motor4?")
-# Newdemo.run(int(a),int(b),int(c),int(d))
-# Newdemo.close()
-
