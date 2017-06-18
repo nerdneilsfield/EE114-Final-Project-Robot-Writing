@@ -1,0 +1,195 @@
+<html>
+    <head>
+        <title>Demo</title>
+        <style>
+            .hulz {
+                margin-left:  30%;
+                margin-right:  30%;
+                margin-top: 50px;
+                max-width: 500;
+                align-content: center;
+                align-items: center;
+            }
+            #title {
+                align-content: center;
+            }
+            #draw {
+                border-color: "black";
+                border-style: dashed;
+                border-width:  2px;
+            }
+            #result{
+                position: float;
+                resize: vertical;
+                border-color: "black";
+                border-style: dashed;
+                border-width:  2px;
+                width:  400px;
+                height:  600px;
+            }
+        </style>
+    </head>
+    <body  onload="init()">
+        <div class="hulz">
+        <h1 id="title">Demo Draw for Fianl Project</h1>
+        <h3> 秦丰伟　and 闫浩东　and 邓岂 </h3>
+        <br />
+        <canvas id="draw" width="400" height="400"></canvas>
+        <br />
+        <hr />
+        <!--<img id="canvasimg" style="position:absolute;top:10%;left:52%;" style="display:none;">-->
+        <input type="button" value="PicSave" id="btn" size="30" onclick="save()">
+        <input type="button" value="Clear" id="clr" size="23" onclick="erase()">
+        <input type="button" value="DataSave" id="clr23" size="23" onclick="datasave()">
+        <p align="center">Result</p>
+        <form method="POST" action="/data">
+        <textarea id="result" placeholder="Result" name="data"></textarea>
+        <input type="submit" value="Submit" id="clr3" size="23">
+        </form>
+        <div>
+
+        <script>
+            
+            var canvas, ctx, flag = false,
+                prevX = 0,
+                currX = 0,
+                prevY = 0,
+                currY = 0,
+                dot_flag = false;
+
+            var x = "black",
+                y = 2;
+            
+            function init() {
+                canvas = document.getElementById('draw');
+                ctx = canvas.getContext("2d");
+                w = canvas.width;
+                h = canvas.height;
+            
+                canvas.addEventListener("mousemove", function (e) {
+                    findxy('move', e)
+                }, false);
+                canvas.addEventListener("mousedown", function (e) {
+                    findxy('down', e)
+                }, false);
+                canvas.addEventListener("mouseup", function (e) {
+                    findxy('up', e)
+                }, false);
+                canvas.addEventListener("mouseout", function (e) {
+                    findxy('out', e)
+                }, false);
+            }
+            
+            function printRoot(x, y) {
+                var result = document.getElementById("result");
+                var temp = result.value;
+                result.innerText = temp+ x.toString()+" "+y.toString()+"\n";
+            }
+            
+            function draw() {
+                ctx.beginPath();
+                ctx.moveTo(prevX, prevY);
+                ctx.lineTo(currX, currY);
+                printRoot(currX, currY);
+                ctx.strokeStyle = x;
+                ctx.lineWidth = y;
+                ctx.stroke();
+                ctx.closePath();
+            }
+            
+            function erase() {
+                var m = confirm("Want to clear");
+                if (m) {
+                    ctx.clearRect(0, 0, w, h);
+                    //document.getElementById("canvasimg").style.display = "none";
+                    //document.getElementById("result").innerText = "";
+                }
+            }
+            
+            function save() {
+                //document.getElementById("canvasimg").style.border = "2px solid";
+                var dataURL = canvas.toDataURL();
+                //document.getElementById("canvasimg").src = dataURL;
+                //document.getElementById("canvasimg").style.display = "inline";
+                var anchor = document.createElement("a");  
+                if ('download' in anchor) {  
+                    anchor.style.visibility = "hidden";  
+                    anchor.href = dataURL;  
+                    anchor.download = name;  
+                    document.body.appendChild(anchor);  
+                    var evt = document.createEvent("MouseEvents");  
+                    evt.initEvent("click", true, true);  
+                    anchor.dispatchEvent(evt);  
+                    document.body.removeChild(anchor);  
+                } else {  
+                    location.href = bloburl;  
+                }   
+                }
+            
+            function findxy(res, e) {
+                if (res == 'down') {
+                    prevX = currX;
+                    prevY = currY;
+                    currX = e.clientX - canvas.offsetLeft;
+                    currY = e.clientY - canvas.offsetTop;
+            
+                    flag = true;
+                    dot_flag = true;
+                    if (dot_flag) {
+                        ctx.beginPath();
+                        ctx.fillStyle = x;
+                        ctx.fillRect(currX, currY, 2, 2);
+                        ctx.closePath();
+                        dot_flag = false;
+                    }
+                }
+                if (res == 'up' || res == "out") {
+                    flag = false;
+                }
+                if (res == 'move') {
+                    if (flag) {
+                        prevX = currX;
+                        prevY = currY;
+                        currX = e.clientX - canvas.offsetLeft;
+                        currY = e.clientY - canvas.offsetTop;
+                        draw();
+                    }
+                }
+            }
+        
+
+        
+        function doSave(value, type, name) {  
+            var blob;  
+            if (typeof window.Blob == "function") {  
+                blob = new Blob([value], {type: type});  
+            } else {  
+                var BlobBuilder = window.BlobBuilder || window.MozBlobBuilder || window.WebKitBlobBuilder || window.MSBlobBuilder;  
+                var bb = new BlobBuilder();  
+                bb.append(value);  
+                blob = bb.getBlob(type);  
+            }  
+            var URL = window.URL || window.webkitURL;  
+            var bloburl = URL.createObjectURL(blob);  
+            var anchor = document.createElement("a");  
+            if ('download' in anchor) {  
+                anchor.style.visibility = "hidden";  
+                anchor.href = bloburl;  
+                anchor.download = name;  
+                document.body.appendChild(anchor);  
+                var evt = document.createEvent("MouseEvents");  
+                evt.initEvent("click", true, true);  
+                anchor.dispatchEvent(evt);  
+                document.body.removeChild(anchor);  
+            } else if (navigator.msSaveBlob) {  
+                navigator.msSaveBlob(blob, name);  
+            } else {  
+                location.href = bloburl;  
+            }  
+        }  
+         
+        
+        function datasave(){  
+            doSave(document.getElementById("result").value, "text/latex", "data.txt");   
+        }  
+        </script>
